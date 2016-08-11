@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+<!--
+Automatically created by Apache Jakarta Tomcat JspC.
+-->
+<web-app>
+
+
+   <servlet>  
+        <servlet-name>pushServlet</servlet-name>  
+        <servlet-class>com.tgram.buddy.plugin.push.DoPushServlet</servlet-class>  
+    </servlet>  
+  
+    <!-- Servlet mappings -->  
+    <servlet-mapping>  
+        <servlet-name>pushServlet</servlet-name>  
+        <url-pattern>/subm</url-pattern>  
+    </servlet-mapping> 
+     
+
+</web-app>
+

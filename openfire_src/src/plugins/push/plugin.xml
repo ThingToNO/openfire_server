@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin>
+    <class>com.tgram.buddy.plugin.push.PushNodesPlugin</class>
+    <name>push</name>
+    <description>消息推送</description>
+    <author>meiwenhui</author>
+    <version>0.0.1</version>
+    <date>14/11/2010</date>
+    <minServerVersion>3.7.0</minServerVersion>
+
+    <adminconsole>
+        <tab id="tab-server-push" name="消息推送" url="push.jsp" description="消息推送.">
+            <sidebar id="siderbar-jn-push" name="pushs">
+                <item id="jingle-nodes" name="点对点推送"
+                      description="push description" url="p2p.jsp"/>
+            </sidebar>
+
+        </tab>
+    </adminconsole>
+
+</plugin>
