@@ -45,7 +45,7 @@ public class NotificationPlugin implements Plugin{
 
     @Override
     public void initializePlugin(PluginManager manager, File pluginDirectory) {
-        Log.info("initializePlugin()");
+        System.out.println("init NotificatonPlugin");
     }
 
     /**
@@ -53,6 +53,7 @@ public class NotificationPlugin implements Plugin{
      *
      * */
     public void sendNotificationToAllUser(String title, String message, String uri){
+    	System.out.println("NotificationPlugin:sendNotificationToAllUser");
         Log.info("sendNotificationToAllUser.......title = " + title);
         IQ notificationIQ = createNotificationIQ("1234567890", title, message, uri);
         notificationIQ.setFrom("admin@zhoulq-fedora");
@@ -80,6 +81,7 @@ public class NotificationPlugin implements Plugin{
      * send notification to a signal
      * */
     public void sendNotificationToSignal(String userName, String title, String message, String uri){
+    	System.out.println("NotificationPlugin:sendNotificationToSignal");
         Log.info("sendNotificationToSignal.......title = " + title);
         IQ notificationIQ = createNotificationIQ("1234567890", title, message, uri);
         notificationIQ.setFrom("admin@zhoulq-fedora");
@@ -103,6 +105,7 @@ public class NotificationPlugin implements Plugin{
      */
     private IQ createNotificationIQ(String apiKey, String title,
                                     String message, String uri) {
+    	System.out.println("NotificationPlugin:createNotificationIQ");
         Log.info("createNotificationIQ()............ title = " + title);
         Random random = new Random();
         String id = Integer.toHexString(random.nextInt());
@@ -124,7 +127,6 @@ public class NotificationPlugin implements Plugin{
 
     @Override
     public void destroyPlugin() {
-        Log.info("destroyPlugin()");
-
+    	System.out.println("NotificationPlugin:destroyPlugin!");
     }
 }

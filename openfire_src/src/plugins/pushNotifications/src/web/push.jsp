@@ -64,7 +64,7 @@
 
 
 
-     <h1>Push Notification</h1>
+     <h1>PushNotification</h1>
 
 		<div class="jive-table">
 			<form action="pushnotification" method="post">

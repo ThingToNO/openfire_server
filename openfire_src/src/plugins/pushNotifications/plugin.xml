@@ -4,7 +4,7 @@
     <class>org.jivesoftware.openfire.plugin.NotificationPlugin</class>
 
     <!-- Plugin meta-data -->
-    <name>Notification</name>
+    <name>PushNotification1</name>
     <description>This is a notification plugin.</description>
     <author>Tao Chenli</author>
 
@@ -17,12 +17,12 @@
     <!-- Admin console entries -->
     <adminconsole>
         <tab id="tab-notification"
-             name="Notification"
+             name="PushNotification2"
              description="Click to push notification.">
             <sidebar id="sidebar-notification-manager"
                      name="Notification Manager">
                 <item id="push-notification"
-                      name="Push Notification"
+                      name="Push Notification3"
                       url="push.jsp"
                       description="Push a notification to users."/>
             </sidebar>
