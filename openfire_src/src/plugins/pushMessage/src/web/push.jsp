@@ -19,7 +19,7 @@
 <html>
 <head>
 <title><fmt:message key="user.message.title"/></title>
-<meta name="pageID" content="push-notification"/>
+<meta name="pageID" content="push-message"/>
 </head>
 <body>
 		<%
@@ -39,34 +39,35 @@
 		} finally {
 			DbConnectionManager.closeConnection(rs, pstmt, con);
 		}
-
-/* 		Connection con1 = null;
-		PreparedStatement pstmt1 = null;
-		ResultSet rs1 = null;
-		List<Map<String, String>> companys = new ArrayList<Map<String, String>>();
-		try {
-			con1 = DbConnectionManager.getConnection();
-			pstmt1 = con1
-					.prepareStatement("select uuid,name from buddyCompany");
-			rs1 = pstmt1.executeQuery();
-			while (rs1.next()) {
-				Map<String, String> _map = new HashMap<String, String>();
-				_map.put("name", rs1.getString("name"));
-				_map.put("uuid", rs1.getString("uuid"));
-				companys.add(_map);
-			}
-		} catch (SQLException e) {
-			out.print("" + e.getLocalizedMessage());
-		} finally {
-			DbConnectionManager.closeConnection(rs1, pstmt1, con1);
-		} */
 	%>
 
 
 
-     <h1>PushNotification</h1>
+     <h1>PushMessage</h1>
 
-		<div class="jive-table">
+<%-- 	<%
+		if (success) {
+	%>
+
+	<div class="jive-success">
+		<table cellpadding="0" cellspacing="0" border="0">
+			<tbody>
+				<tr>
+					<td class="jive-icon"><img src="images/success-16x16.gif"
+						width="16" height="16" border="0" alt=""></td>
+					<td class="jive-icon-label"><fmt:message
+							key="user.message.send" /></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<br>
+
+	<%
+		}
+	%> --%>
+
+	<div class="jive-table">
 			<form action="pushnotification" method="post">
 				<table>
 					<tr>

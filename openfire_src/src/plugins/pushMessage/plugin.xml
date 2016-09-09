@@ -4,8 +4,8 @@
     <class>org.jivesoftware.openfire.plugin.NotificationPlugin</class>
 
     <!-- Plugin meta-data -->
-    <name>PushNotification1</name>
-    <description>This is a notification plugin.</description>
+    <name>PushMessage1</name>
+    <description>This is a push-message plugin.</description>
     <author>Tao Chenli</author>
 
     <version>1.0.0</version>
@@ -15,16 +15,16 @@
     <licenseType>gpl</licenseType>
 
     <!-- Admin console entries -->
-    <adminconsole>
-        <tab id="tab-notification"
-             name="PushNotification2"
-             description="Click to push notification.">
-            <sidebar id="sidebar-notification-manager"
-                     name="Notification Manager">
-                <item id="push-notification"
-                      name="Push Notification3"
+   <adminconsole>
+        <tab id="tab-pushMessage"
+             name="PushMessage2"
+             description="Click to push messages">
+            <sidebar id="sidebar-message-manager"
+                     name="Push Manager">
+                <item id="push-message"
+                      name="Push Messages"
                       url="push.jsp"
-                      description="Push a notification to users."/>
+                      description="Push a message to users."/>
             </sidebar>
         </tab>
     </adminconsole>

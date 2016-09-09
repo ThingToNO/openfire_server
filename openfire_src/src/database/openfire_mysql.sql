@@ -45,10 +45,11 @@ CREATE TABLE ofPrivate (
 CREATE TABLE ofOffline (
   username              VARCHAR(64)     NOT NULL,
   messageID             BIGINT          NOT NULL,
+  uuid                  VARCHER(64)     NOT NULL,
   creationDate          CHAR(15)        NOT NULL,
   messageSize           INTEGER         NOT NULL,
   stanza                TEXT            NOT NULL,
-  PRIMARY KEY (username, messageID)
+  PRIMARY KEY (username, messageID,uuid)
 );
 
 CREATE TABLE ofPresence (

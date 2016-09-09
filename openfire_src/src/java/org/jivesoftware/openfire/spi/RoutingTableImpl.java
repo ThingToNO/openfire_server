@@ -241,7 +241,18 @@ public class RoutingTableImpl extends BasicModule implements RoutingTable, Clust
         try {
 	        if (serverName.equals(jid.getDomain())) {
 	        	// Packet sent to our domain.
-	            routed = routeToLocalDomain(jid, packet, fromServer);
+	            System.out.println("routePacket: Packet sent to our domain: \n"+ packet.toXML());
+	            //tchl begin 20160905
+	            if(packet instanceof Message){	            	
+	            	messageRouter.saveMessage(jid, packet);
+	            }
+	            //tchl end 20160905
+	            /*
+	             * if the message is "urn:xmpp:receipts", the delete the message from ofoffline;
+	             * other routToLoacalDomain
+	             *
+	             */	                     
+	            routed = routeToLocalDomain(jid, packet, fromServer);	            
 	        }
 	        else if (jid.getDomain().endsWith(serverName) && hasComponentRoute(jid)) {
 	            // Packet sent to component hosted in this server
@@ -262,16 +273,26 @@ public class RoutingTableImpl extends BasicModule implements RoutingTable, Clust
         }
 
         if (!routed) {
+        	System.out.println("Failed to route packet to JID: {} packet: {}: "+jid+"  "+ packet.toXML());
             if (Log.isDebugEnabled()) {
                 Log.debug("Failed to route packet to JID: {} packet: {}", jid, packet.toXML());
             }
             if (packet instanceof IQ) {
-                iqRouter.routingFailed(jid, packet);
+            	 //System.out.println("packet instanceof IQ: \n"+ packet.toXML());
+                 iqRouter.routingFailed(jid, packet);
             }
-            else if (packet instanceof Message) {
+            /**
+             * tchl begin 20160905
+             * remove reasion: 1. we already call saveMessage(**); 2.if use this code, it will add a new message in 
+             *ofoffline with new messageID. That message already add by 1(saveMesssage).
+             */
+           /*  else if (packet instanceof Message) {
+            	//System.out.println("packet instanceof Message: \n"+ packet.toXML());
                 messageRouter.routingFailed(jid, packet);
-            }
+            }*/
+            //tchl end 20160905
             else if (packet instanceof Presence) {
+            	//System.out.println("packet instanceof Presence: \n"+ packet.toXML());
                 presenceRouter.routingFailed(jid, packet);
             }
         }

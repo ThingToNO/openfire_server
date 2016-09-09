@@ -1,6 +1,7 @@
 package org.jivesoftware.openfire.plugin.notification;
 
 import org.dom4j.Namespace;
+import java.util.Random;
 import org.dom4j.tree.BaseElement;
 import org.jivesoftware.admin.AuthCheckFilter;
 import org.jivesoftware.database.DbConnectionManager;
@@ -58,11 +59,6 @@ public class PushNotificationServlet extends HttpServlet {
 		new PushThread(toJID, subject, content).start();
 		PrintWriter out = resp.getWriter();
 		out.write("Hello,This is server!!!!");
-        /*resp.setContentType("text/plain");
-        System.out.println("1--PushNotificationServlet doGet()");
-        String title = req.getParameter("title");
-        String message = req.getParameter("message");
-        plugin.sendNotificationToAllUser(title, message, "");*/
     }
 
 
@@ -70,9 +66,10 @@ public class PushNotificationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doGet(req,resp);
     }
-	/**
+    /*
+	*//**
 	 * init plugin
-	 */
+	 *//*
 	public void initializePlugin() {
 
         System.out.println("initializePlugin:send hello to all users!");
@@ -91,13 +88,14 @@ public class PushNotificationServlet extends HttpServlet {
             };
         }.start();
 	}
-
+*/
     @Override
     public void destroy() {
         super.destroy();
         System.out.println("1--PushNotificationServlet destroy()");
         AuthCheckFilter.removeExclude(SERVICE_NAME);
     }
+    
 	public int getUserCount(String where) {
 		SysTime.PrintCurrentTime(TAG, "getUserCount() begin");
 		int count = 0;
@@ -121,33 +119,37 @@ public class PushNotificationServlet extends HttpServlet {
 		SysTime.PrintCurrentTime(TAG, "getUserCount() end");
 		return count;
 	}
-    class PushThread extends Thread {
+	
+	
+	class PushThread extends Thread {
 
 		private String toJid;
 		private String subject;
 		private String content;
-        public PushThread(String toJID, String subject, String content) {
-            this.content = content;
-            this.subject  = subject;
-            this.toJid = toJID;
-			System.out.println("Push:  toJid:"+toJid+"  subject:"+subject+"  content:"+content);
+
+		public PushThread(String toJID, String subject, String content) {
+			this.content = content;
+			this.subject = subject;
+			this.toJid = toJID;
+			System.out.println("Push:  toJid:" + toJid + "  subject:" + subject + "  content:" + content);
 		}
 
-
 		public void run() {
+			// push2User();
+
 			SysTime.PrintCurrentTime(TAG, "run() begin");
 			if (!toJid.equals("-1")) {
-                 SysTime.PrintCurrentTime(TAG,"===toJid!=-1====");
-				XMPPServer.getInstance().getSessionManager()
-		           .sendServerMessage(new JID(toJid+ "@" + domain), subject, content);
+				SysTime.PrintCurrentTime(TAG, "===toJid!=-1====");
+				routePacket(toJid, subject, content);
 			} else {
-				int limit = 50;
-				int count = getUserCount("");
-				int cycleCount = count / limit + (count % limit == 0 ? 0 : 1);
-				if(count/limit == 0){
-					SysTime.PrintCurrentTime(TAG," count/limit == 0 ");
+				int limit = 2;//
+				int count = getUserCount("");				
+				
+				int cycleCount = count / limit + (count % limit == 0 ? 0 : 1);  
+				if (count / limit == 0) {  
+					SysTime.PrintCurrentTime(TAG, " count/limit == 0 ");
 					push2User(toJid, subject, content, 0, count);
-				}else{
+				} else {
 					for (int i = 0; i < cycleCount; i++) {
 						push2User(toJid, subject, content, i * limit, limit);
 					}
@@ -156,39 +158,43 @@ public class PushNotificationServlet extends HttpServlet {
 			SysTime.PrintCurrentTime(TAG, "run() end ");
 		}
 	}
-/*	private void routePacket(String toJid, String subject,
-			String content) {
+
+	private void routePacket(String toJid, String subject, String content) {
+		SysTime.PrintCurrentTime(TAG, "routePacket");
+		Random random = new Random();
+		String uuid  = Long.toHexString(random.nextLong());
+		
 		Message message = new Message();
 
-		message.setTo(toJid + "@" +"172.16.230.6");
+		message.setFrom("admin@" + domain);
+		message.setTo(toJid + "@" + domain);
 		message.setBody(content);
 		message.setSubject(subject);
-
-		BaseElement _Element = new BaseElement("extend", new Namespace("tgram",
-				"http://tgram.com/buddy"));
+        message.setID(uuid);
+/*		BaseElement _Element = new BaseElement("extend", new Namespace("tgram", "http://tgram.com/buddy"));
 		BaseElement _TimeElement = new BaseElement("time");
 		_TimeElement.setText(String.valueOf(new Date().getTime()));
 		_Element.add(_TimeElement);
-		message.addExtension(new PacketExtension(_Element));
+		message.addExtension(new PacketExtension(_Element));*/
+		//PacketExtension packetExtension2 = new PacketExtension("received","urn:xmpp:receipts");
+		//packetExtension2.getElement().addAttribute("id", message.getID());
+		//message.addExtension(packetExtension2);
 
+		
+		
 		JID t = new JID(toJid + "@" + domain);
 		System.out.println("push to : \t" + t.toString());
-		XMPPServer.getInstance().getRoutingTable()
-				.routePacket(t, message, true);
-	}*/
-
-	private Collection<String> push2User(String toJid,
-			String subject, String content, int startIndex, int numResults) {
+		XMPPServer.getInstance().getRoutingTable().routePacket(t, message, true);
+	}
+	
+	private Collection<String> push2User(String toJid, String subject, String content, int startIndex, int numResults) {
 		SysTime.PrintCurrentTime(TAG, "push2User() begin");
 		List<String> usernames = new ArrayList<String>(500);
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			String sql = String
-					.format(
-							"SELECT username FROM ofUser ORDER BY username",
-							toJid);
+			String sql = String.format("SELECT username FROM ofUser ORDER BY username", toJid);
 			con = DbConnectionManager.getConnection();
 			SysTime.PrintCurrentTime(TAG, "push2User() begin 1");
 			if ((startIndex == 0) && (numResults == Integer.MAX_VALUE)) {
@@ -201,26 +207,25 @@ public class PushNotificationServlet extends HttpServlet {
 				SysTime.PrintCurrentTime(TAG, "push2User() begin 2");
 				rs = pstmt.executeQuery();
 				while (rs.next()) {
-
-					//SysTime.PrintCurrentTime(TAG, "push2User() begin 2-1");
-					XMPPServer.getInstance().getSessionManager()
-					           .sendServerMessage(new JID(rs.getString(1)+ "@" + domain), subject, content);
+					routePacket(rs.getString(1), subject, content);
+					SysTime.PrintCurrentTime(TAG, "push2User() begin 2-1");
+				/*	XMPPServer.getInstance().getSessionManager()
+							.sendServerMessage(new JID(rs.getString(1) + "@" + domain), subject, content);*/
 				}
 			} else {
 				SysTime.PrintCurrentTime(TAG, "push2User() begin 4");
-				pstmt = DbConnectionManager.createScrollablePreparedStatement(
-						con, sql);
-				DbConnectionManager.limitRowsAndFetchSize(pstmt, startIndex,
-						numResults);
+				pstmt = DbConnectionManager.createScrollablePreparedStatement(con, sql);
+				DbConnectionManager.limitRowsAndFetchSize(pstmt, startIndex, numResults);
 				rs = pstmt.executeQuery();
 				DbConnectionManager.scrollResultSet(rs, startIndex);
 				int count = 0;
 				while (rs.next() && count < numResults) {
-					//SysTime.PrintCurrentTime(TAG, "push2User() begin 4-1");
-					SysTime.PrintCurrentTime(TAG, "push2User() :"+rs.getString(1));
-					XMPPServer.getInstance().getSessionManager()
-			           .sendServerMessage(new JID(rs.getString(1)+ "@" + domain), subject, content);
-					//SysTime.PrintCurrentTime(TAG, "push2User() begin 4-2");
+					// SysTime.PrintCurrentTime(TAG, "push2User() begin 4-1");
+					SysTime.PrintCurrentTime(TAG, "push2User() :" + rs.getString(1));
+					routePacket(rs.getString(1), subject, content);
+					/*XMPPServer.getInstance().getSessionManager()
+							.sendServerMessage(new JID(rs.getString(1) + "@" + domain), subject, content);*/
+					// SysTime.PrintCurrentTime(TAG, "push2User() begin 4-2");
 				}
 			}
 		} catch (SQLException e) {

@@ -81,6 +81,18 @@ public class OfflineMessageStrategy extends BasicModule implements ServerFeature
         JiveGlobals.setProperty("xmpp.offline.type", type.toString());
     }
 
+    /*
+     * delete Message by uuid
+     */
+    public void delelteMessage(String uuid,String username,Message message){
+    	messageStore.deleteMessage(uuid, username);
+    	 // Inform listeners that an offline message was stored
+        if (!listeners.isEmpty()) {
+            for (OfflineMessageListener listener : listeners) {
+                listener.messageStored(message);
+            }
+        }
+    }
     public void storeOffline(Message message) {
         if (message != null) {
             // Do nothing if the message was sent to the server itself, an anonymous user or a non-existent user
