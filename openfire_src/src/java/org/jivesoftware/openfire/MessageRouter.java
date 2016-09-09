@@ -20,7 +20,9 @@
 
 package org.jivesoftware.openfire;
 
+import org.dom4j.Element;
 import org.dom4j.QName;
+import org.jivesoftware.database.DbConnectionManager;
 import org.jivesoftware.openfire.carbons.Sent;
 import org.jivesoftware.openfire.container.BasicModule;
 import org.jivesoftware.openfire.forward.Forwarded;
@@ -30,6 +32,8 @@ import org.jivesoftware.openfire.session.ClientSession;
 import org.jivesoftware.openfire.session.LocalClientSession;
 import org.jivesoftware.openfire.session.Session;
 import org.jivesoftware.openfire.user.UserManager;
+import org.jivesoftware.smackx.packet.DataForm;
+import org.jivesoftware.smackx.packet.MessageEvent;
 import org.jivesoftware.util.JiveGlobals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +41,10 @@ import org.xmpp.packet.JID;
 import org.xmpp.packet.Message;
 import org.xmpp.packet.Packet;
 import org.xmpp.packet.PacketError;
-
+import org.xmpp.packet.PacketExtension;
+import net.sf.kraken.type.NameSpace;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -274,6 +281,61 @@ public class MessageRouter extends BasicModule {
         else
         {
             // Delegate to offline message strategy, which will either bounce or ignore the message depending on user settings.
+            messageStrategy.storeOffline( (Message) packet );
+        }
+    }
+    
+    /**
+     * send a message ,then always store it  to ofoffline tables;
+     * @param recipient
+     * @param packet
+     */
+    //tchl begin
+    public void saveMessage(JID recipient, Packet packet){
+        log.debug( "Message sent to unreachable address: " + packet.toXML() );
+        final Message msg = (Message) packet;
+        String from = msg.getFrom().toString();
+        if(msg != null && msg.getTo().toString().equals("admin@tchl-pc")){
+        	System.out.println("Message from client,so not store it:"+msg.toXML());
+			/**
+			 * Message from client,so not store it:
+			 * <message id="YHVPv-29" to="admin@tchl-pc" from=
+			 * "607@tchl-pc/XMPP"><x xmlns="jabber:x:event"><delivered/><id>
+			 * db6bbf6b06abd52d</id></x></message> 
+			 * 0-------- 
+			 * delivered
+			 * org.dom4j.Namespace@fc2b3642 [Namespace: prefix mapped to URI "jabber:x:event"] 
+			 * Element--------
+			 * 
+			 * 1--------
+			 * db6bbf6b06abd52d 
+			 * id org.dom4j.Namespace@fc2b3642
+			 * [Namespace: prefix mapped to URI "jabber:x:event"]
+			 * Element--------
+			 * 
+			 * 
+			 * List<Element> elements =  px.getElement().elements();
+        	 	 for(int i=0;i<elements.size();i++){
+        			System.out.println(i+"--------"+ elements.get(i).getData().toString()+"\n"+
+        			 elements.get(i).getName().toString()+"\n"+
+        			 elements.get(i).getNamespace().toString()+"\n"+
+        			 elements.get(i).getNodeTypeName().toString()+"--------\n");
+        		 }
+			 */
+        	 if( msg.getExtension("x", "jabber:x:event")!=null){
+        		 PacketExtension  px = msg.getExtension("x", "jabber:x:event");
+        		 List<Element> elements =  px.getElement().elements();
+        		 for(int i=0;i<elements.size();i++){
+        			 if(elements.get(i).getName().toString().equals("id")){
+        			        messageStrategy.delelteMessage(elements.get(i).getData().toString(), from,msg);
+        			 }
+        		 }
+
+        	 }
+        }
+     
+        else
+        {
             messageStrategy.storeOffline( (Message) packet );
         }
     }
