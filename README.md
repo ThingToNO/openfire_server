@@ -6,4 +6,4 @@
 
 
 
-<img src="https://raw.githubusercontent.com/whtchl/openfire_server/master/art/pushmessage.png/>
+<img src="https://raw.githubusercontent.com/whtchl/openfire_server/master/art/pushmessage.png"/>
