@@ -64,12 +64,15 @@ boolean success = ParamUtils.getBooleanParameter(request,"success");
 		</table>
 	</div>
 	<br>
-
 	<%
 		}
+	%>
+ 
+<%-- <%
+		}
 		else{
-	%>	
-		<div class="jive-error-text">
+	%>	 --%>
+<!-- 		<div class="jive-error-text">
 		<table cellpadding="0" cellspacing="0" border="0">
 			<tbody>
 				<tr>
@@ -78,10 +81,11 @@ boolean success = ParamUtils.getBooleanParameter(request,"success");
 			</tbody>
 		</table>
 	</div>
-	<br>					
-	<%
+	<br> -->					
+<%-- 	<%
 		}
-	%>			
+	%> --%>
+
 
 	<div class="jive-table">
 			<form action="pushnotification" method="post">
