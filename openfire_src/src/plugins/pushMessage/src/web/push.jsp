@@ -15,6 +15,9 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
+<% 
+boolean success = ParamUtils.getBooleanParameter(request,"success");
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -45,7 +48,7 @@
 
      <h1>PushMessage</h1>
 
-<%-- 	<%
+    <%
 		if (success) {
 	%>
 
@@ -55,8 +58,7 @@
 				<tr>
 					<td class="jive-icon"><img src="images/success-16x16.gif"
 						width="16" height="16" border="0" alt=""></td>
-					<td class="jive-icon-label"><fmt:message
-							key="user.message.send" /></td>
+					<td class="jive-icon-label">Message sent successfully.</td>
 				</tr>
 			</tbody>
 		</table>
@@ -65,7 +67,21 @@
 
 	<%
 		}
-	%> --%>
+		else{
+	%>	
+		<div class="jive-error-text">
+		<table cellpadding="0" cellspacing="0" border="0">
+			<tbody>
+				<tr>
+					Message send failed.
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<br>					
+	<%
+		}
+	%>			
 
 	<div class="jive-table">
 			<form action="pushnotification" method="post">

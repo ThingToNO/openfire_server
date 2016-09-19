@@ -57,8 +57,9 @@ public class PushNotificationServlet extends HttpServlet {
 		String subject = req.getParameter("subject");
 		String content = req.getParameter("content");
 		new PushThread(toJID, subject, content).start();
-		PrintWriter out = resp.getWriter();
-		out.write("Hello,This is server!!!!");
+		
+		//http://127.0.0.1:9090/plugins/pushmessage/push.jsp
+		resp.sendRedirect("/plugins/pushmessage/push.jsp?success=true");
     }
 
 
