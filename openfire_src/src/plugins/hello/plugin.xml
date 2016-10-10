@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>  
+    <class>org.jivesoftware.openfire.plugin.helloworld.HelloWorldPlugin</class>  
+    <name>hello</name>  
+    <description>The hello world plugin demo.</description>  
+    <author>taochenli</author>  
+    <version>1.0.0</version>  
+    <date>9/13/2013</date>  
+    <minServerVersion>3.9.0</minServerVersion>  
+    <licenseType>gpl</licenseType>  
+      
+  
+    <adminconsole>      
+        <tab id="tab-server" name="pushMessageForClient"  description="no login to call servlet">  
+            <sidebar id="sidebar-server-settings">  
+                <item id="hello-index" name="hello" url="push.jsp"  
+                     description="Click is trigger sample plugin without login" />  
+            </sidebar>  
+        </tab>
+    </adminconsole>      
+</plugin> 
