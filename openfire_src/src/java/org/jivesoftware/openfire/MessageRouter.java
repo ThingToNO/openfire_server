@@ -327,7 +327,7 @@ public class MessageRouter extends BasicModule {
         		 List<Element> elements =  px.getElement().elements();
         		 for(int i=0;i<elements.size();i++){
         			 if(elements.get(i).getName().toString().equals("id")){
-        			        messageStrategy.delelteMessage(elements.get(i).getData().toString(), from,msg);
+        			        messageStrategy.updateMessage(elements.get(i).getData().toString(), from,msg);
         			 }
         		 }
 

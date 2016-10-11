@@ -67,8 +67,8 @@ public class OfflineMessageStore extends BasicModule implements UserEventListene
 	private static final Logger Log = LoggerFactory.getLogger(OfflineMessageStore.class);
 
     private static final String INSERT_OFFLINE =
-        "INSERT INTO ofOffline (username, messageID,uuid,creationDate, messageSize, stanza) " +
-        "VALUES (?, ?, ?,?, ?, ?)";
+        "INSERT INTO ofOffline (username, messageID,uuid,creationDate, messageSize, stanza,isSend) " +
+        "VALUES (?, ?, ?,?, ?, ?,?)";
     private static final String LOAD_OFFLINE =
         "SELECT stanza, creationDate FROM ofOffline WHERE username=?";
     private static final String LOAD_OFFLINE_MESSAGE =
@@ -88,7 +88,8 @@ public class OfflineMessageStore extends BasicModule implements UserEventListene
      */
     private static final String DELETE_OFFLINE_MESSAGE_BYMESSAGEID=
     		"DELETE FROM ofoffline WHERE uuid=?";
-    
+    private static final String UPDATE_OFFLINE_MESSAGE_BYMESSAGEID=
+    		"UPDATE ofoffline SET isSend=false WHERE uuid=?";
     private static final int POOL_SIZE = 10;
     
     private Cache<String, Integer> sizeCache;
@@ -128,6 +129,7 @@ public class OfflineMessageStore extends BasicModule implements UserEventListene
      * @param message the message to store.
      */
     public void addMessage(Message message) {
+    	System.out.println("addMessage");
         if (message == null) {
             return;
         }
@@ -167,6 +169,7 @@ public class OfflineMessageStore extends BasicModule implements UserEventListene
             pstmt.setString(4, StringUtils.dateToMillis(new java.util.Date()));
             pstmt.setInt(5, msgXML.length());
             pstmt.setString(6, msgXML);
+            pstmt.setBoolean(7, true);
             pstmt.executeUpdate();
         }
 
@@ -362,6 +365,34 @@ public class OfflineMessageStore extends BasicModule implements UserEventListene
         try {
             con = DbConnectionManager.getConnection();
             pstmt = con.prepareStatement(DELETE_OFFLINE_MESSAGE_BYMESSAGEID);
+            pstmt.setString(1, uuid);
+            pstmt.executeUpdate();
+            
+            // Force a refresh for next call to getSize(username),
+            // it's easier than loading the message to be deleted just
+            // to update the cache.
+            removeUsernameFromSizeCache(username);
+        }
+        catch (Exception e) {
+            Log.error("Error deleting offline messages of uuid: " + uuid, e);
+        }
+        finally {
+            DbConnectionManager.closeConnection(pstmt, con);
+        }
+    }
+    
+    /**
+     * tchl begin 20161006
+     * delete the message in this store by messageID 
+     */
+    public void updateMessage(String uuid,String username){
+    	System.out.println("++++OfflineMessageStore:updateMessage(String uuid,String username):uuid:"+uuid+"  username:"+username);
+    	int messageSize;
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        try {
+            con = DbConnectionManager.getConnection();
+            pstmt = con.prepareStatement(UPDATE_OFFLINE_MESSAGE_BYMESSAGEID);
             pstmt.setString(1, uuid);
             pstmt.executeUpdate();
             

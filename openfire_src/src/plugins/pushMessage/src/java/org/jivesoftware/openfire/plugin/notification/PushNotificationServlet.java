@@ -39,16 +39,18 @@ public class PushNotificationServlet extends HttpServlet {
     private static final Logger Log = LoggerFactory.getLogger(PushNotificationServlet.class);
     private static final String TAG= "PushNotificationServlet";
     
-    private static final String SERVICE_NAME = "notification/pushnotification";
+    private static final String SERVICE_NAME = "pushMessage/pushnotification";
     private NotificationPlugin plugin;
     private String domain = JiveProperties.getInstance().get("xmpp.domain");
     //private String domain = "172.16.230.6";
     @Override
     public void init(ServletConfig config) throws ServletException {
+    	AuthCheckFilter.addExclude(SERVICE_NAME);
         super.init(config);
-        System.out.println("1--PushNotificationServlet init()");
+        System.out.println("---------PushNotificationServlet init()");
+        
         plugin = (NotificationPlugin) XMPPServer.getInstance().getPluginManager().getPlugin("notification");
-        AuthCheckFilter.addExclude(SERVICE_NAME);
+       
     }
 
     @Override
@@ -59,13 +61,14 @@ public class PushNotificationServlet extends HttpServlet {
 		new PushThread(toJID, subject, content).start();
 		
 		//http://127.0.0.1:9090/plugins/pushmessage/push.jsp
-		resp.sendRedirect("/plugins/pushmessage/push.jsp?success=true");
+		
     }
 
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doGet(req,resp);
+        resp.sendRedirect("/plugins/pushmessage/push.jsp?success=true");
     }
     /*
 	*//**
