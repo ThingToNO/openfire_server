@@ -95,6 +95,21 @@ public class OfflineMessageStrategy extends BasicModule implements ServerFeature
     }
     
     /*
+     * delete Message by uuid
+     */
+    public void SaveSendMessage(Message message){
+    	System.out.println("tchl SaveSendMessage");
+    	messageStore.addMessageSend(message);
+    	 // Inform listeners that an offline message was stored
+        if (!listeners.isEmpty()) {
+            for (OfflineMessageListener listener : listeners) {
+                listener.messageStored(message);
+            }
+        }
+    }
+    
+    
+    /*
      * UPDATE Message by uuid
      */
     public void updateMessage(String uuid,String username,Message message){
@@ -107,7 +122,8 @@ public class OfflineMessageStrategy extends BasicModule implements ServerFeature
         }
     }
     
-    public void storeOffline(Message message) {
+	public void storeOffline(Message message) {
+		System.out.println("tchl storeOffline");
         if (message != null) {
             // Do nothing if the message was sent to the server itself, an anonymous user or a non-existent user
         	// Also ignore message carbons

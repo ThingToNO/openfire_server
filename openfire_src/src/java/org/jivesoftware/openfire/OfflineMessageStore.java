@@ -88,6 +88,10 @@ public class OfflineMessageStore extends BasicModule implements UserEventListene
      */
     private static final String DELETE_OFFLINE_MESSAGE_BYMESSAGEID=
     		"DELETE FROM ofoffline WHERE uuid=?";
+    private static final String SAVE_OFFLINE_MESSAGE_BYMESSAGEID=
+    		"INSERT INTO ofMessageSend (username, messageID,uuid,creationDate, messageSize, stanza,isSend) " +
+    		        "VALUES (?, ?, ?,?, ?, ?,?)";
+    
     private static final String UPDATE_OFFLINE_MESSAGE_BYMESSAGEID=
     		"UPDATE ofoffline SET isSend=false WHERE uuid=?";
     private static final int POOL_SIZE = 10;
@@ -128,7 +132,7 @@ public class OfflineMessageStore extends BasicModule implements UserEventListene
      *
      * @param message the message to store.
      */
-    public void addMessage(Message message) {
+	public void addMessage(Message message) {
     	System.out.println("addMessage");
         if (message == null) {
             return;
@@ -382,8 +386,64 @@ public class OfflineMessageStore extends BasicModule implements UserEventListene
     }
     
     /**
+     * tchl begin 20160906
+     * save the message in this store by messageID 
+     */
+    public void addMessageSend(Message message){
+    	System.out.println("addMessageSend");
+        if (message == null) {
+            return;
+        }
+        JID recipient = message.getTo();
+        String username = recipient.getNode();
+        // If the username is null (such as when an anonymous user), don't store.
+        if (username == null || !UserManager.getInstance().isRegisteredUser(recipient)) {
+            return;
+        }
+        else
+        if (!XMPPServer.getInstance().getServerInfo().getXMPPDomain().equals(recipient.getDomain())) {
+            // Do not store messages sent to users of remote servers
+            return;
+        }
+
+        //tchl begin 20160906
+        long messageID = SequenceManager.nextID(JiveConstants.OFFLINE);
+         
+        //get messageID 
+        String uuid = message.getID();
+        System.out.println("uuid:"+uuid);
+        //tchl end 20160906
+        // Get the message in XML format.
+        String msgXML = message.getElement().asXML();
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        try {
+            con = DbConnectionManager.getConnection();
+            pstmt = con.prepareStatement(SAVE_OFFLINE_MESSAGE_BYMESSAGEID);
+            pstmt.setString(1, username);
+            pstmt.setLong(2,messageID);
+            pstmt.setString(3,uuid);
+            pstmt.setString(4, StringUtils.dateToMillis(new java.util.Date()));
+            pstmt.setInt(5, msgXML.length());
+            pstmt.setString(6, msgXML);
+            pstmt.setBoolean(7, true);
+            pstmt.executeUpdate();
+        }
+
+        catch (Exception e) {
+            Log.error(LocaleUtils.getLocalizedString("admin.error"), e);
+        }
+        finally {
+            DbConnectionManager.closeConnection(pstmt, con);
+        }
+
+    }
+    
+    
+    /**
      * tchl begin 20161006
-     * delete the message in this store by messageID 
+     * update the message in this store by messageID 
      */
     public void updateMessage(String uuid,String username){
     	System.out.println("++++OfflineMessageStore:updateMessage(String uuid,String username):uuid:"+uuid+"  username:"+username);

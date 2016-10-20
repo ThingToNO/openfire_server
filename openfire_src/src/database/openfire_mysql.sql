@@ -45,10 +45,22 @@ CREATE TABLE ofPrivate (
 CREATE TABLE ofOffline (
   username              VARCHAR(64)     NOT NULL,
   messageID             BIGINT          NOT NULL,
-  uuid                  VARCHER(64)     NOT NULL,
+  uuid                  VARCHAR(64)     NOT NULL,
   creationDate          CHAR(15)        NOT NULL,
   messageSize           INTEGER         NOT NULL,
   stanza                TEXT            NOT NULL,
+  isSend                BOOLEAN         ,
+  PRIMARY KEY (username, messageID,uuid)
+);
+
+CREATE TABLE ofMessageSend (
+  username              VARCHAR(64)     NOT NULL,
+  messageID             BIGINT          NOT NULL,
+  uuid                  VARCHAR(64)     NOT NULL,
+  creationDate          CHAR(15)        NOT NULL,
+  messageSize           INTEGER         NOT NULL,
+  stanza                TEXT            NOT NULL,
+  isSend                BOOLEAN         ,
   PRIMARY KEY (username, messageID,uuid)
 );
 
