@@ -12,14 +12,30 @@
 
 
 =================================
+
 本文用的是mysql数据库，在运行程序之前先部署mysql，接着创建openfire数据库。sql路径在openfire_server\openfire_src\src\database\openfire_mysql.sql
+
+
+===================================
+编译：
+openfire_server\openfire_src\build\build.xml
+全源码编译 ant 双击：openfire(default)
+编译所以的plugins： ant 双击plugins
+编译单个plugin： 在 openfire_server\openfire_src\build\build.properties 添加plugin=pushMessage。 即添加plugin=名字插件名字
+                  deploy.jar.dir=
+                #plugin=openfirepushnotificationpluginmaster
+               plugin=pushMessage
+
+
 ===============================
+
 打包发布：详见blog
 http://blog.csdn.net/michael1112/article/details/52534413
 
 
 
 ===================================
+
 在下面这个java中修改服务器ip地址。
 RoutingTableImpl.java   
 @Override
