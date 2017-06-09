@@ -10,8 +10,8 @@
 <img src="https://raw.githubusercontent.com/whtchl/openfire_server/master/art/pushmessage.png"/>
 
 
-调用接口：http://127.0.0.1:9090/plugins/pushMessage/pushnotification?toJID=709&subject=11&content=tchl
-
+调用接口：http://127.0.0.1:9090/plugins/pushMessage/pushnotification?toJID=709&subject=11&content=11
+toJID 是病区，也就是Android端的登录名； subject随便写； content是床位号
 
 =================================
 
